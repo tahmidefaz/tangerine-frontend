@@ -90,7 +90,7 @@ const App = () => {
           <ul>
             {data.map(agent => (
               <li key={agent.id}>
-                ID: {agent.id}, Name: {agent.name}
+                ID: {agent.id}, Name: {agent.agent_name}, Description: {agent.description}
               </li>
           ))}
           </ul>
