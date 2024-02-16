@@ -3,23 +3,56 @@ import axios from 'axios';
 
 const App = () => {
   const [data, setData] = useState('');
-  const [newAgent, setNewAgent] = useState('');
   const [loading, setLoading] = useState(true);
+  const [agentData, setAgentData] = useState({
+    name: '',
+    description: '',
+    file: null
+  });
 
   useEffect(() => {
-    fetchData();
+    getAgents();
   }, []);
 
-  const fetchData = () => {
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setAgentData({
+      ...agentData,
+      [name]: files ? files[0] : value
+    })
+  }
+
+  const getAgents = () => {
     axios.get('/agents')
       .then(response => {
         setData(response.data.data)
          setLoading(false);
       })
       .catch(error => {
-        console.error('Error fetching agents:', error)
+        console.error('Error fetching agents:', error);
       });
   };
+
+  const addAgent = () => {
+    const { name, description, file } = agentData;
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('description', description);
+    formData.append('file', file);
+
+    axios.post('/agents', formData)
+      .then(() => {
+        setAgentData({
+          name: '',
+          description: '',
+          file: null
+        });
+        getAgents();
+      })
+      .catch(error => {
+        console.error('Error adding agent:', error);
+      })
+  }
 
   return (
     <div>
@@ -27,13 +60,41 @@ const App = () => {
       {loading ? (
           <p>Loading Agents...</p>
       ) : (
-        <ul>
-          {data.map(agent => (
-            <li key={agent.id}>
-              ID: {agent.id}, Name: {agent.name}
-            </li>
-        ))}
-        </ul>
+        <>
+          <div>
+            <input
+              type="text"
+              placeholder="Agent Name"
+              name="name"
+              value={agentData.name}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Agent Description"
+              name="description"
+              value={agentData.description}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <input
+              type="file"
+              name="file"
+              onChange={handleChange}
+            />
+          </div>
+          <button onClick={addAgent}>Add Agent</button>
+          <ul>
+            {data.map(agent => (
+              <li key={agent.id}>
+                ID: {agent.id}, Name: {agent.name}
+              </li>
+          ))}
+          </ul>
+        </>
       )}
     </div>
   );
