@@ -34,10 +34,11 @@ const App = () => {
   };
 
   const addAgent = () => {
-    const { name, description, file } = agentData;
+    const { name, description, system_prompt, file } = agentData;
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
+    formData.append('system_prompt', system_prompt);
     formData.append('file', file);
 
     axios.post('/agents', formData)
@@ -45,6 +46,7 @@ const App = () => {
         setAgentData({
           name: '',
           description: '',
+          system_prompt: '',
           file: null
         });
         getAgents();
@@ -81,6 +83,15 @@ const App = () => {
           </div>
           <div>
             <input
+              type="text"
+              placeholder="System Prompt"
+              name="system_prompt"
+              value={agentData.system_prompt}
+              onChange={handleChange}
+            />
+          </div>
+          <div>
+            <input
               type="file"
               name="file"
               onChange={handleChange}
@@ -90,7 +101,7 @@ const App = () => {
           <ul>
             {data.map(agent => (
               <li key={agent.id}>
-                ID: {agent.id}, Name: {agent.agent_name}, Description: {agent.description}
+                ID: {agent.id}, Name: {agent.agent_name}, Description: {agent.description}, System Prompt: {agent.system_prompt}
               </li>
           ))}
           </ul>
