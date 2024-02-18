@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {
+  Button,
+  Form,
+  FormGroup,
+  FileUpload,
+  TextInput,
+  Panel,
+  PanelMain,
+  PanelMainBody,
+  Title,
+} from '@patternfly/react-core';
+import { Table, Caption, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 
 const App = () => {
   const [data, setData] = useState('');
@@ -34,10 +46,11 @@ const App = () => {
   };
 
   const addAgent = () => {
-    const { name, description, file } = agentData;
+    const { name, description, system_prompt, file } = agentData;
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', description);
+    formData.append('system_prompt', system_prompt);
     formData.append('file', file);
 
     axios.post('/agents', formData)
@@ -45,6 +58,7 @@ const App = () => {
         setAgentData({
           name: '',
           description: '',
+          system_prompt: '',
           file: null
         });
         getAgents();
@@ -55,48 +69,67 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h1>Agents</h1>
-      {loading ? (
-          <p>Loading Agents...</p>
-      ) : (
-        <>
-          <div>
-            <input
-              type="text"
-              placeholder="Agent Name"
-              name="name"
-              value={agentData.name}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <input
-              type="text"
-              placeholder="Agent Description"
-              name="description"
-              value={agentData.description}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <input
-              type="file"
-              name="file"
-              onChange={handleChange}
-            />
-          </div>
-          <button onClick={addAgent}>Add Agent</button>
-          <ul>
-            {data.map(agent => (
-              <li key={agent.id}>
-                ID: {agent.id}, Name: {agent.agent_name}, Description: {agent.description}
-              </li>
-          ))}
-          </ul>
-        </>
-      )}
-    </div>
+    <Panel>
+      <PanelMain>
+        <PanelMainBody>
+          <Title headingLevel="h1">Add Agent</Title>
+          {loading ? (
+              <p>Loading Agents...</p>
+          ) : (
+            <div>
+              <Form>
+                <FormGroup>
+                  <FormGroup label="Agent Name" isRequired>
+                    <TextInput id="name" isRequired type="text" name="name" value={agentData.name} onChange={handleChange} />
+                  </FormGroup>
+
+                  <FormGroup label="Agent Description" isRequired>
+                    <TextInput id="description" isRequired type="text" name="description" value={agentData.description} onChange={handleChange} />
+                  </FormGroup>
+
+                  <FormGroup label="System Prompt" isRequired>
+                    <TextInput id="prompt" isRequired type="text" name="system_prompt" value={agentData.system_prompt} onChange={handleChange} />
+                  </FormGroup>
+
+                  <FormGroup label="File">
+                    <input
+                      type="file"
+                      name="file"
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Button onClick={addAgent}>Add Agent</Button>
+                  </FormGroup>
+                </FormGroup>
+              </Form>
+
+              <Title headingLevel="h1">Agents</Title>
+              <Table aria-label="Simple table">
+              <Thead>
+                <Tr>
+                  <Th>ID</Th>
+                  <Th>Name</Th>
+                  <Th>Description</Th>
+                  <Th>System Prompt</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {data.map(agent => (
+                  <Tr key={agent.id}>
+                    <Td>{agent.id}</Td>
+                    <Td>{agent.agent_name}</Td>
+                    <Td>{agent.description}</Td>
+                    <Td>{agent.system_prompt}</Td>
+                  </Tr>
+                ))}
+              </Tbody>
+              </Table>
+            </div>
+          )}
+        </PanelMainBody>
+      </PanelMain>
+    </Panel>
   );
 }
 
