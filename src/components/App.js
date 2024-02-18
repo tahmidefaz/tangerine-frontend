@@ -9,6 +9,7 @@ import {
   Panel,
   PanelMain,
   PanelMainBody,
+  Title,
 } from '@patternfly/react-core';
 import { Table, Caption, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 
@@ -71,7 +72,7 @@ const App = () => {
     <Panel>
       <PanelMain>
         <PanelMainBody>
-          <h4>Add Agent</h4>
+          <Title headingLevel="h1">Add Agent</Title>
           {loading ? (
               <p>Loading Agents...</p>
           ) : (
@@ -79,15 +80,15 @@ const App = () => {
               <Form>
                 <FormGroup>
                   <FormGroup label="Agent Name" isRequired>
-                    <TextInput isRequired type="text" name="name" value={agentData.name} onChange={handleChange} />
+                    <TextInput id="name" isRequired type="text" name="name" value={agentData.name} onChange={handleChange} />
                   </FormGroup>
 
                   <FormGroup label="Agent Description" isRequired>
-                    <TextInput isRequired type="text" name="description" value={agentData.description} onChange={handleChange} />
+                    <TextInput id="description" isRequired type="text" name="description" value={agentData.description} onChange={handleChange} />
                   </FormGroup>
 
                   <FormGroup label="System Prompt" isRequired>
-                    <TextInput isRequired type="text" name="system_prompt" value={agentData.system_prompt} onChange={handleChange} />
+                    <TextInput id="prompt" isRequired type="text" name="system_prompt" value={agentData.system_prompt} onChange={handleChange} />
                   </FormGroup>
 
                   <FormGroup label="File">
@@ -102,8 +103,9 @@ const App = () => {
                   </FormGroup>
                 </FormGroup>
               </Form>
+
+              <Title headingLevel="h1">Agents</Title>
               <Table aria-label="Simple table">
-              <Caption>Agents</Caption>
               <Thead>
                 <Tr>
                   <Th>ID</Th>
@@ -114,7 +116,7 @@ const App = () => {
               </Thead>
               <Tbody>
                 {data.map(agent => (
-                  <Tr>
+                  <Tr key={agent.id}>
                     <Td>{agent.id}</Td>
                     <Td>{agent.agent_name}</Td>
                     <Td>{agent.description}</Td>
