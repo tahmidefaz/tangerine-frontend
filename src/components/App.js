@@ -68,6 +68,29 @@ const App = () => {
       })
   }
 
+  const deleteAgent = (agent) => {
+    axios.delete('/agents/' + agent.target.id)
+      .then(() =>
+        getAgents()
+      )
+      .catch(error => {
+        console.error('Error deleting agent:', error);
+      })
+  }
+
+  const uploadFile = (agent) => {
+    const file = agent.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+    axios.post('/agents/' + agent.target.id + '/document_upload', formData)
+      .then(() =>
+        getAgents()
+      )
+      .catch(error => {
+        console.error('Error uploading file:', error);
+      })
+  }
+
   return (
     <Panel>
       <PanelMain>
@@ -91,13 +114,6 @@ const App = () => {
                     <TextInput id="prompt" isRequired type="text" name="system_prompt" value={agentData.system_prompt} onChange={handleChange} />
                   </FormGroup>
 
-                  <FormGroup label="File">
-                    <input
-                      type="file"
-                      name="file"
-                      onChange={handleChange}
-                    />
-                  </FormGroup>
                   <FormGroup>
                     <Button onClick={addAgent}>Add Agent</Button>
                   </FormGroup>
@@ -121,6 +137,15 @@ const App = () => {
                     <Td>{agent.agent_name}</Td>
                     <Td>{agent.description}</Td>
                     <Td>{agent.system_prompt}</Td>
+                    <Td>
+                      <input
+                        id={agent.id}
+                        type="file"
+                        name="file"
+                        onChange={uploadFile}
+                      />
+                      <Button id={agent.id} onClick={deleteAgent} variant="danger">Delete Agent</Button>
+                    </Td>
                   </Tr>
                 ))}
               </Tbody>
