@@ -45,6 +45,7 @@ function Chat() {
             },
             body: JSON.stringify({
                 query: chatInput,
+                prevMsgs: messages,
                 stream: "true",
             })
         })
