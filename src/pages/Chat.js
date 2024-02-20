@@ -94,9 +94,9 @@ function Chat() {
                 <Text component={TextVariants.p}>{agentInfo.description}</Text>
             </TextContent>
             <div>
-                <div class="pf-v5-c-panel pf-m-scrollable" style={{"marginLeft": "10rem", "marginRight": "15rem", "display": "flex", "flexDirection": "column", "justifyContent": "space-around"}}>
-                    <div class="pf-v5-c-panel__main" style={{"minHeight": "70vh"}}>
-                        <div class="pf-v5-c-panel__main-body">
+                <div className="pf-v5-c-panel pf-m-scrollable" style={{"marginLeft": "10rem", "marginRight": "15rem", "display": "flex", "flexDirection": "column", "justifyContent": "space-around"}}>
+                    <div className="pf-v5-c-panel__main" style={{"minHeight": "70vh"}}>
+                        <div className="pf-v5-c-panel__main-body">
                             <TextContent id="all-messages">
                                 {
                                     messages && messages.map((message, index) => (
@@ -109,7 +109,7 @@ function Chat() {
                             </TextContent>
                         </div>
                     </div>
-                    <div class="pf-v5-c-panel__footer" style={{"width": "100%"}}>
+                    <div className="pf-v5-c-panel__footer" style={{"width": "100%"}}>
                         <TextInput
                             type="text"
                             value={chatInput}

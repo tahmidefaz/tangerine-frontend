@@ -63,7 +63,7 @@ function Agent() {
                 </TextContent>
                 <List>
                     {
-                        agentInfo.filenames.map(filename => <ListItem>{filename}</ListItem>)
+                        agentInfo.filenames.map(filename => <ListItem key={filename}>{filename}</ListItem>)
                     }
                 </List>
             </TextContent>
@@ -78,7 +78,7 @@ function Agent() {
                     onChange={uploadFile}
                 />
                 <div>
-                    <Button variant="warning" ouiaID="chat" onClick={() => navigate(`/${agentId}/chat`)}>Chat With {agentInfo.agent_name}</Button>
+                    <Button variant="warning" onClick={() => navigate(`/${agentId}/chat`)}>Chat With {agentInfo.agent_name}</Button>
                 </div>
             </div>
         </div>
