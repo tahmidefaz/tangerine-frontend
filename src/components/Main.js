@@ -102,7 +102,7 @@ const Main = () => {
           {loading ? (
               <p>Loading Agents...</p>
           ) : (
-            <div style={{"width": "90%", "display": "flex", "flex-direction": "column", "marginLeft": "2.5rem"}}>
+            <div style={{"width": "90%", "display": "flex", "flexDirection": "column", "marginLeft": "2.5rem"}}>
               <div style={{"display": "flex", "justifyContent": "end", "paddingTop": "0.5rem"}}>
                 <Button variant="primary" onClick={handleModalToggle} icon={<AddCircleIcon/>}>
                   Add Agent
@@ -120,7 +120,7 @@ const Main = () => {
               <Tbody>
                 {data.map(agent => (
                   <Tr key={agent.id}>
-                    <Link to={`/${agent.id}`}><Td>{agent.agent_name}</Td></Link>
+                    <Td><Link to={`/${agent.id}`}>{agent.agent_name}</Link></Td>
                     <Td>{agent.description}</Td>
                     <Td>
                       <Button id={agent.id} onClick={() => navigate(`/${agent.id}/chat`)} variant="warning">Chat</Button>
