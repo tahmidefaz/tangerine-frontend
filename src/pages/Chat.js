@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import axios from "axios"
 import { TextContent, Text, TextVariants, TextInput } from "@patternfly/react-core"
+import Markdown from "react-markdown"
 
 function Chat() {
     const { agentId } = useParams()
@@ -103,7 +104,8 @@ function Chat() {
                                     messages && messages.map((message, index) => (
                                         <TextContent key={index} style={{"paddingBottom": "1rem"}}>
                                             <Text component={TextVariants.h3}>{message.sender === "ai" ? agentInfo.agent_name : message.sender}</Text>
-                                            <Text component={TextVariants.p}>{message.text}</Text>
+                                            {/* <Text component={TextVariants.p}>{message.text}</Text> */}
+                                            <Markdown>{message.text}</Markdown>
                                         </TextContent>
                                     ))
                                 }
