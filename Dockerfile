@@ -1,8 +1,11 @@
 # First stage builds the application
-FROM registry.access.redhat.com/ubi9/nodejs-18 as builder
+FROM registry.access.redhat.com/ubi9/nodejs-18 AS builder
 
 # Add application sources
-ADD . $HOME
+ADD package.json $HOME
+ADD package-lock.json $HOME
+ADD src $HOME/src
+ADD public $HOME/public
 
 # In case you run into permission errors during build (eg. by use of umask)
 # running the fix-permission script will make sure all bits are as expected by the image
@@ -11,7 +14,7 @@ RUN fix-permissions ./
 USER 1001
 
 # Install the dependencies
-RUN npm install
+RUN npm -d install
 
 # Second stage copies the application to the minimal image
 FROM registry.access.redhat.com/ubi9/nodejs-18-minimal
@@ -20,4 +23,4 @@ FROM registry.access.redhat.com/ubi9/nodejs-18-minimal
 COPY --from=builder $HOME $HOME
 
 # Run script uses standard ways to run the application
-CMD npm run -d start
+CMD ["npm", "run", "-d", "start"]
