@@ -22,5 +22,9 @@ FROM registry.access.redhat.com/ubi9/nodejs-18-minimal
 # Copy the application source and build artifacts from the builder image to this one
 COPY --from=builder $HOME $HOME
 
+ENV NODE_ENV=production
+ENV PORT=3000
+EXPOSE 3000
+
 # Run script uses standard ways to run the application
 CMD ["npm", "run", "-d", "start"]
