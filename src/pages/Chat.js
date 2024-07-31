@@ -65,14 +65,10 @@ function Chat() {
 
             const matches = [...value.matchAll(/data: (\{.*\})\r\n/g)];
 
-            console.log(matches)
-
             for (const match of matches) {
                 const jsonString = match[1]
-                console.log(jsonString)
                 const { text_content, search_metadata } = JSON.parse(jsonString);
 
-                console.log(text_content)
                 if (text_content || search_metadata) {
                     setMessages((prevMessages) => {
                         const lastMessage = prevMessages[prevMessages.length - 1]
