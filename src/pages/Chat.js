@@ -12,8 +12,8 @@ function Chat() {
     const [messages, setMessages] = useState([])
     const [chatInput, setChatInput] = useState('')
 
-    const addMessage = (sender, message) => {
-        const messageToAdd = {sender: sender, text: message}
+    const addMessage = (sender, message, done = false) => {
+        const messageToAdd = {sender: sender, text: message, done: done}
         setMessages(prevMessages => [...prevMessages, messageToAdd])
     }
 
@@ -54,6 +54,7 @@ function Chat() {
         })
 
         const reader = response.body.pipeThrough(new TextDecoderStream("utf-8")).getReader();
+
         while(true) {
             const chunk = await reader.read();
             const {done, value} = chunk;
@@ -62,33 +63,32 @@ function Chat() {
                 break;
             }
 
-            // const decodedChunk = decoder.decode(value)
-            const lines = value.split("\n");
+            const matches = [...value.matchAll(/data: (\{.*\})\r\n/g)];
 
-            const parsedLines = lines.map((line) => {
-                if (line.length > 0) {
-                    return JSON.parse(line)
-                }
-                return {text_content: '\n'}
-            })
+            for (const match of matches) {
+                const jsonString = match[1]
+                const { text_content, search_metadata } = JSON.parse(jsonString);
 
-            for (const parsedLine of parsedLines) {
-                const { text_content, search_metadata } = parsedLine;
                 if (text_content || search_metadata) {
                     setMessages((prevMessages) => {
                         const lastMessage = prevMessages[prevMessages.length - 1]
                         if (lastMessage.sender !== "ai") {
-                            const newMessage = {sender: "ai", text: text_content}
+                            const newMessage = {sender: "ai", text: text_content, done: false}
                             return [...prevMessages, newMessage]
                         }
+
                         const updatedMessages = [...prevMessages];
+
                         if (text_content) {
                             updatedMessages[updatedMessages.length - 1].text += text_content
                         }
+
                         if (search_metadata) {
                             updatedMessages[updatedMessages.length - 1].search_metadata = search_metadata
+                            // search_metadata arrives from API at the end of the text content stream
+                            updatedMessages[updatedMessages.length - 1].done = true
                         }
-                        
+
                         return updatedMessages;
                     })
                 }
@@ -107,17 +107,16 @@ function Chat() {
                 <div className="pf-v5-c-panel pf-m-scrollable" style={{"marginLeft": "10rem", "marginRight": "15rem", "display": "flex", "flexDirection": "column", "justifyContent": "space-around"}}>
                     <div className="pf-v5-c-panel__main" style={{"minHeight": "70vh"}}>
                         <div className="pf-v5-c-panel__main-body">
-                            <TextContent id="all-messages">
-                                {
-                                    messages && messages.map((message, index) => (
-                                        <TextContent key={index} style={{"paddingBottom": "1rem"}}>
-                                            <Text component={TextVariants.h3}>{message.sender === "ai" ? agentInfo.agent_name : message.sender}</Text>
-                                            <Markdown remarkPlugins={[remarkGfm]}>{message.text}</Markdown>
-                                            {message.sender === "ai" && <SearchInfo searchData={message.search_metadata}/>}
-                                        </TextContent>
-                                    ))
-                                }
-                            </TextContent>
+                            {
+                                messages && messages.map((message, index) => (
+                                    <TextContent key={index} style={{"paddingBottom": "1rem"}}>
+                                        <Text component={TextVariants.h3}>{message.sender === "ai" ? agentInfo.agent_name : message.sender}</Text>
+                                        {/* do not format as markdown until text content streaming is finished */}
+                                        {message.done ? <Markdown remarkPlugins={[remarkGfm]}>{message.text}</Markdown> : <Text>{message.text}</Text>}
+                                        {message.sender === "ai" && message.search_metadata && <SearchInfo searchData={message.search_metadata}/>}
+                                    </TextContent>
+                                ))
+                            }
                         </div>
                     </div>
                     <div className="pf-v5-c-panel__footer" style={{"width": "100%"}}>
